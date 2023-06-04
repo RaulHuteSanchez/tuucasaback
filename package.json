@@ -1,0 +1,22 @@
+{
+  "name": "tucasayabackend",
+  "version": "1.0.0",
+  "description": "Backend para proyecto de vente, alquiler de viviendas",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BMHA1/TuCasaYaBackend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BMHA1/TuCasaYaBackend/issues"
+  },
+  "homepage": "https://github.com/BMHA1/TuCasaYaBackend#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
