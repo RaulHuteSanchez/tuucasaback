@@ -1,16 +1,16 @@
-const { User} = require('../models/index.js');
-const hashing = require('../middleware/login.js');
+const { Users} = require('../models/index.js');
+const hashing = require('../middleware/authentication.js');
 
 // Registro de usuarios
 module.exports.registerUser = async (req, res) => {
   try {
     const newUser = req.body;
     newUser.password = hashing.createHash(newUser.password);
-    await User.create(newUser);
+    await Users.create(newUser);
 
     const tokenData = {
-      id: createdUser.id,
-      email: createdUser.email
+      id: newUser.id,
+      email: newUser.email
     };
     const token = hashing.createToken(tokenData);
       res.status(200).json({ accessToken: token });
@@ -18,6 +18,48 @@ module.exports.registerUser = async (req, res) => {
     console.error(error); // Aquí registramos el error
     res.status(400).json({
       message: 'No se ha podido generar un nuevo usuario.',
+    });
+  }
+};
+
+// Inicio de sesión
+module.exports.login = async (req, res) => {
+  try {
+    const userRequest = req.body;
+    const userBBDD = await Users.findOne({ where: { email: userRequest.email } });
+    let token = await hashing.compareHash(userBBDD, userRequest);
+
+    res.status(200).json({ token: token });
+  } catch (error) {
+    res.json({
+      message: 'Correo electrónico o contraseña denegados.',
+      errors: error,
+      status: 400
+    });
+  }
+};
+
+/*
+---------------
+get one user
+---------------
+*/
+
+// Buscar usuario por ID
+module.exports.searchUser = async (req, res) => {
+  try {
+    let user = await Users.findByPk(req.params.id)
+
+    if (!user) {
+      res.status(200).send('El usuario no existe');
+    } else {
+      res.status(200).json({ data: user });
+    }
+  } catch (error) {
+    res.json({
+      message: 'Usuario no encontrado.',
+      errors: error,
+      status: 400
     });
   }
 };
@@ -44,22 +86,7 @@ module.exports.registerUser = async (req, res) => {
 //   }
 // };
 
-// // Buscar usuario por ID
-// module.exports.searchUser = (req, res) => {
-//   try {
-//     User.findByPk(req.params.id)
-//       .then((user) => {
-//         if (!user) res.status(200).send('El usuario no existe');
-//         res.status(200).json({ data: user });
-//       });
-//   } catch (error) {
-//     res.json({
-//       message: 'Usuario no encontrado.',
-//       errors: error,
-//       status: 400
-//     });
-//   }
-// };
+
 
 // // Buscar todos los usuarios
 // module.exports.searchAll = async (req, res) => {
@@ -89,21 +116,6 @@ module.exports.registerUser = async (req, res) => {
 //   } catch (error) {
 //     res.status(400).send({
 //       message: 'El usuario no se ha podido eliminar',
-//       status: 400
-//     });
-//   }
-// };
-
-// // Inicio de sesión
-// module.exports.login = async (req, res) => {
-//   try {
-//     let hashDecoded = await hashing.compareHash(req.body);
-//     console.log(hashDecoded);
-//     res.status(200).json({ hashDecoded });
-//   } catch (error) {
-//     res.json({
-//       message: 'Correo electrónico o contraseña denegados.',
-//       errors: error,
 //       status: 400
 //     });
 //   }

@@ -8,7 +8,11 @@ exports.userValidationRules = () => {
   ];
 };
 
-
+exports.emailPasswordValidate = () => {
+  return [
+    check('email', 'El email es obligatorio').not().isEmpty(),
+  ];
+}
 
 exports.validate = (req, res, next) => {
   const errors = validationResult(req);
